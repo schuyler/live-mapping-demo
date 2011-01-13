@@ -1,0 +1,206 @@
+<html>
+<style type="text/css">
+  body {
+    font-family: "Helvetica Neue", sans-serif;
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+  dt {
+    font-size: large;
+    font-weight: bold;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid gray;
+  }
+  dd {
+    background-color: #eee;
+    border: 1px solid gray;
+    padding: 10px 10px 0px 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+  pre {
+    font-family: monospace;
+  }
+</style>
+<body>
+  <h1>Carsonified Geolocation Conference Notes</h1>
+  <div>Schuyler Erle &lt;schuyler@simplegeo.com&gt;</div>
+  <div>13 January 2010</div>
+  <dl>
+    <dt>Objectives.</dt>
+    <dd><ul>
+        <li>Practical, hands-on intro to geo libraries and APIs by way of examples.</li>
+        <li>Less a comprehensive overview, and more of a deep dive.</li>
+        <li>Understand how to <em>approach</em> the problems of building geo apps.</li>
+        <li>Emphasis on Free and Open Source.</li>
+        <li>Specifically NOT about Google.</li>
+    </ul></dd>
+    <dt>Topics.</dt>
+    <dd>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Mercator_projection">The Mercator Projection</a></li>
+        <li><a href="http://polymaps.org/docs/">Polymaps</a></li>
+        <li><a href="http://openstreetmap.org/">OpenStreetMap</a></li>
+        <li><a href="http://api.jquery.com/">jQuery</a></li>
+        <li><a href="http://www.flickr.com/services/api/">Flickr API</a></li>
+        <li><a href="http://docs.openlayers.org/">OpenLayers</a></li> and the <a href="http://docs.openlayers.org/library/spherical_mercator.html">spherical mercator projection</a></li>
+      </ul>
+    </dd>
+     
+    <dt>Polymaps.</dt>
+    <dd><pre>
+var po = org.polymaps;
+var div = document.getElementById("map");
+
+map = po.map()
+        .container(div.appendChild(po.svg("svg")));
+
+map.add(po.image()
+          .url("http://tile.openstreetmap.org/{Z}/{X}/{Y}.png"));
+    </pre></dd>
+
+    <dt>Adding controls.</dt>
+    <dd><pre>
+map = po.map()
+        .add(po.drag())
+        .add(po.wheel())
+        .add(po.dblclick());
+        // .add(po.interact());
+    </pre></dd>
+
+    <dt>Adding a compass.</dt>
+    <dd><pre>
+map.add(po.compass().pan("none"));
+    </pre></dd>
+
+    <dt>Adding a permalink.</dt>
+    <dd><pre>
+var map = po.map()
+    .container(div.appendChild(po.svg("svg")))
+    .add(po.interact())
+    .add(po.hash());
+    </pre></dd>
+
+    <dt>Swapping in Cloudmade's "Pale Dawn" tiles.</dt>
+    <dd><pre>
+// http://cloudmade.com/register
+map.add(po.image()
+   .url(po.url("http://{S}tile.cloudmade.com"
+   + "/1a1b06b230af4efdbb989ea99e9841af"
+   + "/998/256/{Z}/{X}/{Y}.png")
+   .hosts(["a.", "b.", "c.", ""])));
+   </pre></dd>
+
+   <dt>Finding out about the map.</dt>
+   <dd><pre>
+debugObject({
+  "center": map.center(),
+  "zoom": map.zoom(),
+  "extent": map.extent()
+});
+   </pre></dd>
+
+   <dt>Now witness the power of this fully SVG-enabled browser.</dt>
+   <dd><pre>
+map.angle(Math.PI / 4.0);
+   </pre></dd>
+
+   <dt>Capturing the user's click. (I)</dt>
+   <dd><pre>
+$("#map").click(function(e) {
+    var position = map.mouse(e);
+    var clicked = map.pointLocation(position);
+    debugObject(clicked);
+});
+   </pre></dd>
+
+   <dt>Capturing the user's click. (II)</dt>
+   <dd><pre>
+var mousePosition;
+$("#map").mousedown(function(e) { mousePosition = map.mouse(e); });
+$("#map").mouseup(function(e) {
+    var position = map.mouse(e);
+    if (mousePosition.x - position.x + mousePosition.y - position.y > 5) return;
+    var clicked = map.pointLocation(map.mouse(e));
+    debugObject(clicked);
+});
+   </pre></dd>
+
+   <dt>Capturing the user's click. (III)</dt>
+   <dd><pre>
+    /* deal with wraparound */
+    while (coord.lon > 180.0) coord.lon -= 360.0;
+    while (coord.lon < -180.0) coord.lon += 360.0;
+   </pre></dd>
+
+   <dt>JSONP and the Flickr photo API.</dt>
+   <dd><pre>
+var FLICKR_API_KEY = "...";
+
+function getPhotosNear(where) {
+    var args = {
+        "method": "flickr.photos.search",
+        "format": "json",
+        "lat": where.lat,
+        "lon": where.lon,
+        "min_date_taken": "2009-01-01",
+        "per_page": 10,
+        "extras": "geo,url_t,url_s",
+        "api_key": FLICKR_API_KEY,
+    };
+    $.getJSON("http://api.flickr.com/services/rest/?jsoncallback=?", args, showPhotoResults);
+}
+
+function showPhotoResults(data) {
+    debugObject(data);
+}
+
+var mousePosition;
+$("#map").mousedown(function(e) { mousePosition = map.mouse(e); });
+$("#map").mouseup(function(e) {
+    var position = map.mouse(e);
+    if (mousePosition.x - position.x + mousePosition.y - position.y > 5) return;
+    var clicked = map.pointLocation(map.mouse(e));
+    getPhotosNear(clicked);
+});
+   </pre></dd>
+
+   <dt>Putting the photos on the map.</dt>
+   <dd><pre>
+function showPhotoResults(data) {
+    debugObject(data);
+    $.each(data.photos.photo, function(idx, photo) { showPhoto(photo) });
+}
+
+function findTopLeft(elem) {
+    var divLeft = 0, divTop = 0, obj = elem;
+    do {
+        divLeft += obj.offsetLeft;
+        divTop += obj.offsetTop;
+    } while (obj = obj.offsetParent);
+    return {left:divLeft, top:divTop};
+}
+
+function showPhoto(photo) {
+    var location = map.locationPoint({lat: photo.latitude,
+                                      lon: photo.longitude});
+    var img = div.appendChild(document.createElement("img")),
+        offset = findTopLeft(div);
+    img.setAttribute("src", photo.url_t);
+    img.style.left = location.x + offset.left + "px";
+    img.style.top = location.y + offset.top + "px";
+    img.style.position = "absolute";
+    img.style.border = "1px solid gray";
+}
+   </pre></dd>
+
+   <dt>Startup.</dt>
+   <dd><pre>
+   </pre></dd>
+
+  </dl>
+</body>
+</html>
+

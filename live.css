@@ -1,0 +1,63 @@
+body {
+    font-family: "Helvetica Neue", sans-serif;
+    margin-left: 15%;
+    padding: 10px 0px 0px 0px;
+}
+
+#main {
+    width: 85%;
+}
+
+#title {
+    position: absolute;
+    left: 36px;
+    top: 10%;
+    font-size: 36px;
+    font-weight: bold;
+    display: none;
+}
+
+#map {
+    width: 100%;
+    height: 300px;
+    border: 1px solid black;
+    overflow: hidden;
+}
+
+#search-box {
+    float: right;
+}
+
+#search {
+    width: 200px;
+}
+
+#controls {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#console-div {
+    display: none;
+    width: 100%;
+    height: 300px;
+    font-family: monospace;
+}
+
+textarea {
+    width: 100%;
+    height: 300px;
+    padding: 5px;
+    font-family: monospace;
+    text-wrap: off;
+    font-size: large;
+}
+
+#copy {
+    text-align: right;
+    font-size: x-small;
+}
+
+#help {
+    font-size: x-small;
+}

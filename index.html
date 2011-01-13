@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="http://cdn.simplegeo.com/js/1.2/simplegeo.places.jq.min.js"></script>
+    <script src="http://github.com/simplegeo/polymaps/raw/v2.4.0/polymaps.js"></script> 
+    <style type="text/css">
+        @import url("live.css");
+        @import url("polymaps.css");
+    </style>
+  </head>
+  <body>
+    <div id="main">
+        <div id="title">Polymaps<br />Explorer</div>
+        <div id="map"></div>
+        <div id="copy">
+          &copy; 2010
+          <a href="http://www.cloudmade.com/">CloudMade</a>,
+          <a href="http://www.openstreetmap.org/">OpenStreetMap</a> contributors,
+          <a href="http://creativecommons.org/licenses/by-sa/2.0/">CCBYSA</a>.
+        </div>
+        <div id="controls">
+            <div>
+                <input type="button" value="Run" onClick="refresh()" />
+                <input type="button" value="Source" onClick="showSource()" />
+                <input type="button" value="Debug" onClick="showConsole()" />
+                <span id="search-box">
+                    <input id="search" type="text" />
+                    <input type="button" type="button" value="Search" onClick="search()" />
+                </span>
+            </div>
+            <div id="view-text">
+                <span id="source-div"><textarea id="source" wrap="off">
+var po = org.polymaps;
+var div = document.getElementById("map");
+
+map = po.map()
+        .container(div.appendChild(po.svg("svg")));
+
+map.add(po.image()
+          .url("http://tile.openstreetmap.org/{Z}/{X}/{Y}.png"));</textarea></span><span id="console-div"><textarea id="console" wrap="off"></textarea></span>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="live.js"></script>
+    <span id="help">
+        <a target="_blank" href="http://github.com/schuyler/polymaps-demo/">View Source</a>
+        <a target="_blank" href="notes.html">Notes</a>
+    </span>
+  </body>
+</html>
