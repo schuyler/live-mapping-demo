@@ -44,10 +44,12 @@
       <ul>
         <li><a href="http://en.wikipedia.org/wiki/Mercator_projection">The Mercator Projection</a></li>
         <li><a href="http://polymaps.org/docs/">Polymaps</a></li>
+        <li><a href="http://simplegeo.com/docs/">SimpleGeo APIs</a></li>
         <li><a href="http://openstreetmap.org/">OpenStreetMap</a></li>
         <li><a href="http://api.jquery.com/">jQuery</a></li>
         <li><a href="http://www.flickr.com/services/api/">Flickr API</a></li>
-        <li><a href="http://docs.openlayers.org/">OpenLayers</a></li> and the <a href="http://docs.openlayers.org/library/spherical_mercator.html">spherical mercator projection</a></li>
+        <li><a href="http://docs.openlayers.org/">OpenLayers docs</a> and <a href="http://openlayers.org/dev/examples/">examples</a></li>
+        <li>What are you interested in?</li>
       </ul>
     </dd>
      
@@ -103,6 +105,12 @@ debugObject({
   "extent": map.extent()
 });
    </pre></dd>
+
+    <dt>Changing the map location.</dt>
+    <dd><pre>
+map.center({latitude:51.0, longitude: 0});
+map.zoom(8);
+    </pre></dd>
 
    <dt>Now witness the power of this fully SVG-enabled browser.</dt>
    <dd><pre>
@@ -188,19 +196,26 @@ function findTopLeft(elem) {
 function showPhoto(photo) {
     var location = map.locationPoint({lat: photo.latitude,
                                       lon: photo.longitude});
-    var img = div.appendChild(document.createElement("img")),
+    var img = div.prepend(document.createElement("img")),
         offset = findTopLeft(div);
     img.setAttribute("src", photo.url_t);
-    img.style.left = location.x + offset.left + "px";
-    img.style.top = location.y + offset.top + "px";
-    img.style.position = "absolute";
+    img.style.left = location.x + "px";
+    img.style.top = location.y + "px";
+    img.style.position = "relative";
     img.style.border = "1px solid gray";
 }
    </pre></dd>
 
-   <dt>Startup.</dt>
-   <dd><pre>
-   </pre></dd>
+   <dt>Next steps.</dt>
+   <dd>
+    <ul>
+        <li>Make the photos scroll with the map.</li>
+        <li>Add HTML5 geolocation.</li>
+        <li>Add SimpleGeo Places.</li>
+        <li>Add SimpleGeo Context.</li>
+        <li>What are you interested in?</li>
+    </ul>
+   </dd>
 
   </dl>
 </body>
